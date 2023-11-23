@@ -15,6 +15,17 @@ class Ingreso(models.Model):
     
 Ingreso._meta.app_label = 'app'
 
+class Gasto(models.Model):
+    Codigo = models.CharField(max_length=8, primary_key=True)
+    Fecha = models.DateField() 
+    Autor = models.CharField(max_length=50)
+    Cantidad = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+
+    def __str__(self):
+        return self.Codigo
+
+Gasto._meta.app_label = 'app'
+
 class Trabajador(models.Model):
     DNIT = models.CharField(max_length=9, primary_key=True)
     Nombre = models.CharField(max_length=20)
