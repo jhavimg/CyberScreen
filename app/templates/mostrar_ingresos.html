@@ -13,10 +13,9 @@
 </head>
 
 <body>
-    <header>
-        <img src="{% static 'img/logo.png' %}" alt="logo de CyberScreen Club">
-        <h1>CyberScreen Club</h1>
-    </header>
+
+    {% include 'header.html' %}
+
     <main>
         <div class="formulario">
             <h2>Dar de alta ingreso</h2>
@@ -54,12 +53,11 @@
             </ul>
         </div>
 
-
+       
 
     </main>
-    <footer>
-        <p>&copy; CyberScreen Club</p>
-    </footer>
+
+    {% include 'footer.html' %}
 
     <script>
 
