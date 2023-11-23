@@ -1,0 +1,8 @@
+{% load static %}
+
+<p>¿Estás seguro de que deseas borrar "{{ ingreso.Codigo }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Sí, borrar</button>
+</form>
+<a href="{% url 'mostrar_ingresos' %}">Cancelar</a>
