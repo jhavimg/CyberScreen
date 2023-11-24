@@ -3,4 +3,15 @@
 <header>
     <img src="{% static 'img/logo.png' %}" alt="logo de CyberScreen Club">
     <h1>CyberScreen Club</h1>
+
+    <nav>
+        <ul>
+            <li><a href="{% url 'inicio' %}">Inicio</a></li>
+            <li><a href="{% url 'mostrar_ingresos' %}">Contabilidad</a></li>
+            <li><a href="{% url 'gestion_de_clientes' %}">Gestión de clientes</a></li>
+            <li><a href="{% url 'recursos_humanos' %}">Recursos humanos</a></li>
+            <li><a href="{% url 'produccion' %}">Producción</a></li>
+        </ul>
+    </nav>
+
 </header>
