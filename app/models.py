@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.apps import apps
 
-# Create your models here.
+# Subsistema de contabilidad
 
 class Ingreso(models.Model):
     Codigo = models.CharField(max_length=8, primary_key=True)
@@ -25,6 +25,8 @@ class Gasto(models.Model):
         return self.Codigo
 
 Gasto._meta.app_label = 'app'
+
+# Subsistema de recursos humanos
 
 class Trabajador(models.Model):
     DNIT = models.CharField(max_length=9, primary_key=True)
@@ -53,4 +55,64 @@ class Pertenece(models.Model):
         return f"{self.DNIT} - {self.NombreDep}"
 
 
+# Subsistema de producción
 
+class Contenido(models.Model):
+    Titulo = models.CharField(max_length=100)
+    Fecha = models.DateField()
+    Director = models.CharField(max_length=80, null=False)
+    País = models.CharField(max_length=50, null=False)
+    
+    GÉNERO_CHOICES = [
+        ('Terror', 'Terror'),
+        ('Comedia', 'Comedia'),
+        ('Acción', 'Acción'),
+    ]
+    Género = models.CharField(
+        max_length=50,
+        choices=GÉNERO_CHOICES,
+        null=False,
+        validators=[],
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name='valid_genre',
+                check=models.Q(Género__in=['Terror', 'Comedia', 'Acción']),
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.Titulo} ({self.Fecha})"
+    
+class Película(models.Model):
+    Titulo = models.CharField(max_length=100)
+    Fecha = models.DateField()
+    Duración = models.IntegerField(null=False)
+    
+    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return f"{self.Titulo} ({self.Fecha})"
+    
+class Serie(models.Model):
+    Titulo = models.CharField(max_length=100)
+    Fecha = models.DateField()
+    Temporadas = models.IntegerField(null=False)
+    
+    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE, primary_key=True)
+
+    def __str__(self):
+        return f"{self.Titulo} ({self.Fecha})"
+    
+class GastoContenido(models.Model):
+    Codigo = models.CharField(max_length=8, primary_key=True)
+    Titulo = models.CharField(max_length=100, null=False)
+    Fecha = models.DateField(null=False)
+    
+    gasto = models.ForeignKey(Gasto, on_delete=models.CASCADE)
+    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.Codigo} - {self.Titulo} ({self.Fecha})"

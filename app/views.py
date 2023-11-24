@@ -3,6 +3,25 @@ from .models import *
 from .forms import *
 from django.http import HttpResponse
 
+# Páginas de navegación
+
+def inicio(request):
+    return render(request, 'inicio.html')
+
+def contabilidad(request):
+    return render(request, 'contabilidad.html')
+
+def gestion_de_clientes(request):
+    return render(request, 'gestion_de_clientes.html')
+
+def recursos_humanos(request):
+    return render(request, 'recursos_humanos.html')
+
+def produccion(request):
+    return render(request, 'produccion.html')
+
+# Subsistema de contabilidad
+
 def mostrar_ingresos(request):
     ingresos = Ingreso.objects.all()
     form = IngresoForm()
