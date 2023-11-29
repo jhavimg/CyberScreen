@@ -61,50 +61,60 @@ class Contenido(models.Model):
     Titulo = models.CharField(max_length=100)
     Fecha = models.DateField()
     Director = models.CharField(max_length=80, null=False)
-    País = models.CharField(max_length=50, null=False)
-    
+    Pais = models.CharField(max_length=50, null=False)
+
     GÉNERO_CHOICES = [
         ('Terror', 'Terror'),
         ('Comedia', 'Comedia'),
         ('Acción', 'Acción'),
     ]
-    Género = models.CharField(
+    Genero = models.CharField(
         max_length=50,
         choices=GÉNERO_CHOICES,
         null=False,
-        validators=[],
     )
 
     class Meta:
         constraints = [
             models.CheckConstraint(
                 name='valid_genre',
-                check=models.Q(Género__in=['Terror', 'Comedia', 'Acción']),
+                check=models.Q(Genero__in=['Terror', 'Comedia', 'Acción']),
             ),
+            models.UniqueConstraint(fields=['Titulo', 'Fecha'], name='unique_contenido'),
         ]
 
     def __str__(self):
         return f"{self.Titulo} ({self.Fecha})"
-    
-class Película(models.Model):
+
+class Pelicula(models.Model):
     Titulo = models.CharField(max_length=100)
     Fecha = models.DateField()
-    Duración = models.IntegerField(null=False)
-    
-    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE, primary_key=True)
+    Duracion = models.IntegerField(null=False)
+
+    contenido = models.OneToOneField(Contenido, on_delete=models.CASCADE, primary_key=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['Titulo', 'Fecha'], name='unique_pelicula'),
+        ]
 
     def __str__(self):
-        return f"{self.Titulo} ({self.Fecha})"
+        return f"{self.contenido.Titulo} - {self.contenido.Fecha} - Duración: {self.Duracion} minutos"
     
 class Serie(models.Model):
     Titulo = models.CharField(max_length=100)
     Fecha = models.DateField()
     Temporadas = models.IntegerField(null=False)
     
-    contenido = models.ForeignKey(Contenido, on_delete=models.CASCADE, primary_key=True)
+    contenido = models.OneToOneField(Contenido, on_delete=models.CASCADE, primary_key=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['Titulo', 'Fecha'], name='unique_serie'),
+        ]
 
     def __str__(self):
-        return f"{self.Titulo} ({self.Fecha})"
+        return f"{self.contenido.Titulo} ({self.contenido.Fecha} - Temporadas: {self.Temporadas})"
     
 class GastoContenido(models.Model):
     Codigo = models.CharField(max_length=8, primary_key=True)

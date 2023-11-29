@@ -19,13 +19,22 @@ from django.urls import path, include
 from app.views import *
 
 urlpatterns = [
-    path('', inicio, name='inicio'),
     path('admin/', admin.site.urls),
-    path('contabilidad', contabilidad, name='contabilidad'),
-    path('gestion_de_clientes', gestion_de_clientes, name='gestion_de_clientes'),
-    path('recursos_humanos', recursos_humanos, name='recursos_humanos'),
-    path('produccion', produccion, name='produccion'),
-    path('mostrar_ingresos/', mostrar_ingresos, name='mostrar_ingresos'),
-    path('editar/<str:codigo>/', editar_ingreso, name='editar_ingreso'),
+
+    path('contabilidad/', contabilidad, name='contabilidad'),
     path('borrar/<str:codigo>/', borrar_ingreso, name='borrar_ingreso'),
+    path('borrar_gastos/<str:codigo>/', borrar_gasto, name='borrar_gasto'),
+
+    path('editar/<str:codigo>/', editar_ingreso, name='editar_ingreso'),
+    path('mostrar_ingresos/', mostrar_ingresos, name='mostrar_ingresos'),
+
+    path('gestion_de_clientes/', gestion_de_clientes, name='gestion_de_clientes'),
+
+    path('recursos_humanos/', recursos_humanos, name='recursos_humanos'),
+    path('borrar_trabajdor/<str:trabajador_id>/', borrar_trabajador, name='borrar_trabajador'),
+    path('borrar_departamento/<str:departamento_id>/', borrar_departamento, name='borrar_departamento'),
+
+    path('produccion/', produccion, name='produccion'),
+    path('borrar_contenido_y_pelicula/<str:contenido_id>/', borrar_contenido_y_pelicula, name="borrar_contenido_y_pelicula"),
+
 ]

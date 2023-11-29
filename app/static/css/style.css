@@ -11,6 +11,8 @@ body {
     min-height: 100vh;
 }
 
+/* Cabecera y menú de navegación*/
+
 header {
     display: flex;
     flex-direction: row;
@@ -50,14 +52,18 @@ h1 {
     margin-left: 50px;
 }
 
+
+
 main {
     flex: 1;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 80%;
     margin: 50px auto;
     padding: 0;
 }
+
+/* Formulario para ingresar tuplas en tablas */
 
 .formulario {
     display: flex;
@@ -92,6 +98,8 @@ main {
 .formulario input[type="date"]:focus {
     border-color: #3498db;
 }
+
+/* Listar tuplas de tablas */
 
 .listado {
     width: 50%;
@@ -129,6 +137,19 @@ li {
     justify-content: flex-end;
 }
 
+dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 20px;
+}
+
+/* Pie de página */
+
 footer {
     width: 100%;
     height: 80px;
@@ -140,13 +161,9 @@ footer {
     text-align: center;
 }
 
-dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 15px;
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 20px;
+.seccion{
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
 }

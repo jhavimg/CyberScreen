@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,125 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 </head>
+
 <body>
 
     {% include 'header.html' %}
 
+    <h1>Subsistema de Recursos humanos</h1>
+
     <main>
 
-        <h1>Recursos humanos</h1>
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Dar de alta trabajador</h2>
+                <form method="post" action="{% url 'recursos_humanos' %}">
+                    {% csrf_token %}
+                    {{ trabajador_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Trabajador</button>
+                </form>
+            </div>
+
+            <div class="listado">
+
+                <h2>Listar trabajadores</h2>
+                <ul>
+                    {% for trabajador in trabajador_list %}
+                    <li>
+                        {{ trabajador.DNIT }} - {{ trabajador.Nombre }} - {{ trabajador.Apellidos }} - 
+                        {{ trabajador.Teléfono }} - {{ trabajador.CorreoElectronico}}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                trabajador_id="{{ trabajador.DNIT }}">Borrar</button>
+                        </div>
+
+                        <dialog id="popup-{{ trabajador.DNIT }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el trabajador:"{{ trabajador.DNIT }}"?</p>
+                            <form method="post" action="{% url 'borrar_trabajador' trabajador.DNIT %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'recursos_humanos' %}">Cancelar</a>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Dar de alta departamento</h2>
+                <form method="post" action="{% url 'recursos_humanos' %}">
+                    {% csrf_token %}
+                    {{ departamento_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar departamento</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Listar departamentos</h2>
+                <ul>
+                    {% for departamento in departamento_list %}
+                    <li>{{ departamento.NombreDep }} - {{ departamento.Descripcion }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                departamento_id="{{ departamento.NombreDep }}">Borrar</button>
+                        </div>
+
+                        <dialog id="popup-{{ departamento.NombreDep }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el departamento:"{{ departamento.NombreDep }}"?</p>
+                            <form method="post" action="{% url 'borrar_departamento' departamento.NombreDep %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'recursos_humanos' %}">Cancelar</a>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
     </main>
 
     {% include 'footer.html' %}
-    
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var trabajador_id = button.getAttribute('trabajador_id');
+                    var popup = document.getElementById('popup-' + trabajador_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var departamento_id = button.getAttribute('departamento_id');
+                    var popup = document.getElementById('popup-' + departamento_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+    </script>
+
 </body>
+
 </html>

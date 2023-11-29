@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,114 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 </head>
+
 <body>
 
     {% include 'header.html' %}
 
-    <main>
+    <h1>Subsistema de contabilidad</h1>
 
-        <h1>Contabilidad</h1>
+    <main>
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Dar de alta ingreso</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ ingreso_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+
+            <div class="listado">
+                <h2>Ingresos</h2>
+                <ul>
+                    {% for ingreso in ingresos_list %}
+                    <li>
+                        {{ ingreso.Codigo }} - {{ ingreso.Fecha }} - {{ ingreso.Autor }} - {{ ingreso.Cantidad }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                data-ingreso-codigo="{{ ingreso.Codigo }}">Borrar</button>
+                            <button type="button" class="btn btn-outline-warning">Editar</button>
+                        </div>
+
+
+                        <dialog id="popup-{{ ingreso.Codigo }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el ingreso con código:"{{ ingreso.Codigo }}"?</p>
+                            <form method="post" action="{% url 'borrar_ingreso' ingreso.Codigo %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'contabilidad' %}">Cancelar</a>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Dar de alta gasto</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ gasto_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Gastos</h2>
+                <ul>
+                    {% for gasto in gastos_list %}
+                    <li>
+                        {{ gasto.Codigo }} - {{ gasto.Fecha }} - {{ gasto.Autor }} - {{ gasto.Cantidad }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                data-ingreso-codigo="{{ gasto.Codigo }}">Borrar</button>
+                            <button type="button" class="btn btn-outline-warning">Editar</button>
+                        </div>
+
+
+                        <dialog id="popup-{{ gasto.Codigo }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el gasto con código:"{{ gasto.Codigo }}"?</p>
+                            <form method="post" action="{% url 'borrar_gasto' gasto.Codigo %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'contabilidad' %}">Cancelar</a>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
     </main>
 
     {% include 'footer.html' %}
-    
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var codigo = button.getAttribute('data-ingreso-codigo');
+                    var popup = document.getElementById('popup-' + codigo);
+                    popup.showModal();
+                });
+            });
+        });
+
+    </script>
+
 </body>
+
 </html>

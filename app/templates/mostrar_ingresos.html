@@ -17,43 +17,49 @@
     {% include 'header.html' %}
 
     <main>
-        <div class="formulario">
-            <h2>Dar de alta ingreso</h2>
-            <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-outline-success">Guardar</button>
-            </form>
+
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Dar de alta ingreso</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+    
+            <div class="listado">
+                <h2>Ingresos</h2>
+                <ul>
+                    {% for ingreso in ingresos %}
+                    <li>
+                        {{ ingreso.Codigo }} - {{ ingreso.Fecha }} - {{ ingreso.Autor }} - {{ ingreso.Cantidad }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger" data-ingreso-codigo="{{ ingreso.Codigo }}">Borrar</button>
+                            <button type="button" class="btn btn-outline-warning">Editar</button>
+                        </div>
+    
+    
+                        <dialog id="popup-{{ ingreso.Codigo }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el ingreso con código:"{{ ingreso.Codigo }}"?</p>
+                            <form method="post" action="{% url 'borrar_ingreso' codigo=ingreso.Codigo %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'mostrar_ingresos' %}">Cancelar</a>
+                        </dialog>
+    
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
         </div>
-
-        <div class="listado">
-            <h2>Ingresos</h2>
-            <ul>
-                {% for ingreso in ingresos %}
-                <li>
-                    {{ ingreso.Codigo }} - {{ ingreso.Fecha }} - {{ ingreso.Autor }} - {{ ingreso.Cantidad }}
-                    <!-- <a href="{% url 'editar_ingreso' codigo=ingreso.Codigo %}">Editar</a> -->
-                    <div class="contenedor-botones">
-                        <button type="button" class="mostrarpop btn btn-outline-danger" data-ingreso-codigo="{{ ingreso.Codigo }}">Borrar</button>
-                        <button type="button" class="btn btn-outline-warning">Editar</button>
-                    </div>
-
-
-                    <dialog id="popup-{{ ingreso.Codigo }}" class="flotante">
-                        <p>¿Estás seguro de que deseas borrar el ingreso con código:"{{ ingreso.Codigo }}"?</p>
-                        <form method="post" action="{% url 'borrar_ingreso' codigo=ingreso.Codigo %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
-                        </form>
-                        <a href="{% url 'mostrar_ingresos' %}">Cancelar</a>
-                    </dialog>
-
-                </li>
-                {% endfor %}
-            </ul>
+        
+        <div class="seccion">
+            
         </div>
-
-       
 
     </main>
 
