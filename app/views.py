@@ -5,9 +5,6 @@ from django.http import HttpResponse
 
 # Páginas de navegación
 
-def inicio(request):
-    return render(request, 'inicio.html')
-
 def contabilidad(request):
     return render(request, 'contabilidad.html')
 
@@ -21,6 +18,51 @@ def produccion(request):
     return render(request, 'produccion.html')
 
 # Subsistema de contabilidad
+
+def contabilidad(request):
+    ingreso_form = IngresoForm()
+    gasto_form = GastoForm()
+
+    # Agregar ingreso
+    if request.method == 'POST':
+        ingreso_form = IngresoForm(request.POST)
+        if ingreso_form.is_valid():
+            ingreso_form.save()
+            return redirect('contabilidad')
+        
+    # Listar ingresos
+    ingresos_list = Ingreso.objects.all()
+
+    # Agregar gasto
+    if request.method == 'POST':
+        gasto_form = GastoForm(request.POST)
+        if gasto_form.is_valid():
+            gasto_form.save()
+            return redirect('contabilidad')
+        
+    # Listar gastos
+    gastos_list = Gasto.objects.all()
+
+    return render(request, 'contabilidad.html', {
+        'ingreso_form': ingreso_form,
+        'ingreso_list': ingresos_list,
+        'gasto_form': gasto_form,
+        'gastos_list': gastos_list,
+    })
+
+def borrar_ingreso(request, codigo):
+    ingreso = get_object_or_404(Ingreso, Codigo=codigo)
+    if request.method == 'POST':
+        ingreso.delete()
+        return redirect('contabilidad')
+    return render(request, 'contabilidad.html', {'ingreso': ingreso})
+
+def borrar_gasto(request, codigo):
+    gasto = get_object_or_404(Gasto, Codigo=codigo)
+    if request.method == 'POST':
+        gasto.delete()
+        return redirect('contabilidad')
+    return render(request, 'contabilidad.html', {'gasto': gasto})
 
 def mostrar_ingresos(request):
     ingresos = Ingreso.objects.all()
@@ -45,9 +87,119 @@ def editar_ingreso(request, codigo):
         form = IngresoForm(instance=ingreso)
     return render(request, 'editar_ingreso.html', {'form': form, 'ingreso': ingreso})
 
-def borrar_ingreso(request, codigo):
-    ingreso = get_object_or_404(Ingreso, Codigo=codigo)
+
+
+# Subsistema de Recursos Humanos
+
+def recursos_humanos(request):
+    trabajador_form = TrabajadorForm()
+    departamento_form = DepartamentoForm()
+
+    # Agregar Trabajador
     if request.method == 'POST':
-        ingreso.delete()
-        return redirect('mostrar_ingresos')
-    return render(request, 'borrar_ingreso.html', {'ingreso': ingreso})
+        trabajador_form = TrabajadorForm(request.POST)
+        if trabajador_form.is_valid():
+            trabajador_form.save()
+            return redirect('recursos_humanos')
+    else:
+        trabajador_form = TrabajadorForm()
+    
+    # Listar Trabajadores
+    trabajador_list = Trabajador.objects.all()
+
+    # Agregar Departamento
+    if request.method == 'POST':
+        departamento_form = DepartamentoForm(request.POST)
+        if departamento_form.is_valid():
+            departamento_form.save()
+            return redirect('recursos_humanos')
+        
+    # Listar Departamentos
+    departamento_list = Departamento.objects.all()
+
+    return render(request, 'recursos_humanos.html', {
+        'trabajador_form': trabajador_form,
+        'trabajador_list': trabajador_list,
+        'departamento_form': departamento_form,
+        'departamento_list': departamento_list,
+    })
+
+def borrar_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, DNIT=trabajador_id)
+    if request.method == 'POST':
+        trabajador.delete()
+        return redirect('recursos_humanos')
+    return render(request, 'recursos_humanos.html', {'trabajador': trabajador})
+
+def borrar_departamento(request, departamento_id):
+    departamento = get_object_or_404(Departamento, NombreDep=departamento_id)
+    if request.method == 'POST':
+        departamento.delete()
+        return redirect('recursos_humanos')
+    return render(request, 'recursos_humanos.html', {'departamento': departamento})
+
+
+# Subsistema de Producción
+
+def produccion(request):
+    # Agregar Contenido
+    if request.method == 'POST':
+        contenido_form = ContenidoForm(request.POST)
+        if contenido_form.is_valid():
+            contenido_form.save()
+            return redirect('produccion')
+    else:
+        contenido_form = ContenidoForm()
+
+    # Mostrar Contenido
+    contenido_list = Contenido.objects.all()
+
+    # Agregar Película
+    if request.method == 'POST':
+        pelicula_form = PeliculaForm(request.POST)
+        if pelicula_form.is_valid():
+            pelicula_form.save()
+            return redirect('produccion')
+    else:
+        pelicula_form = PeliculaForm()
+
+    # Mostrar Película
+    pelicula_list = Pelicula.objects.all()
+
+    # Agregar Serie
+    if request.method == 'POST':
+        serie_form = SerieForm(request.POST)
+        if serie_form.is_valid():
+            serie_form.save()
+            return redirect('produccion')
+    else:
+        serie_form = SerieForm
+
+    # Mostrar Serie
+    serie_list = Serie.objects.all()
+
+    return render(request, 'produccion.html', {
+        'contenido_form': contenido_form,
+        'contenido_list': contenido_list,
+        'pelicula_form': pelicula_form,
+        'pelicula_list': pelicula_list,
+        'serie_form': serie_form,
+        'serie_list': serie_list,
+    })
+
+def borrar_contenido_y_pelicula(request, contenido_id):
+    contenido = get_object_or_404(Contenido, pk=contenido_id)
+
+    # Busca la instancia de Pelicula asociada y elimínala
+    pelicula = Pelicula.objects.filter(contenido=contenido)
+    if pelicula.exists():
+        pelicula.delete()
+
+    serie = Serie.objects.filter(contenido=contenido)
+    if serie.exists():
+        serie.delete()
+
+    # Elimina la instancia de Contenido
+    contenido.delete()
+
+    return redirect('produccion')

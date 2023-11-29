@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,123 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 </head>
-<body>
 
+<body>
     {% include 'header.html' %}
+
+    <h1>Subsistema de Producción</h1>
 
     <main>
 
-        <h1>Producción</h1>
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Dar de alta contenido</h2>
+                <form method="post" action="{% url 'produccion' %}">
+                    {% csrf_token %}
+                    {{ contenido_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Contenido</button>
+                </form>
+            </div>
+
+            <div class="listado">
+
+                <h2>Listar contenidos</h2>
+                <ul>
+                    {% for contenido in contenido_list %}
+                    <li>{{ contenido.Titulo }} - {{ contenido.Fecha }} - {{ contenido.Director }} - {{ contenido.Pais }} - {{ contenido.Genero }}
+                    <div class="contenedor-botones">
+                        <button type="button" class="mostrarpop btn btn-outline-danger" contenido_id="{{ contenido.pk }}">Borrar</button>
+                    </div>
+
+                    <dialog id="popup-{{ contenido.pk }}" class="flotante">
+                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ contenido.Titulo }}"?</p>
+                        <form method="post" action="{% url 'borrar_contenido_y_pelicula' contenido.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                        </form>
+                        <a href="{% url 'produccion' %}">Cancelar</a>
+                    </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
+
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Agregar Película</h2>
+                <form method="post" action="{% url 'produccion' %}">
+                    {% csrf_token %}
+                    {{ pelicula_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Película</button>
+                </form>
+
+            </div>
+
+            <div class="listado">
+                <h2>Películas</h2>
+                <ul>
+                    {% for pelicula in pelicula_list %}
+                    <li>{{ pelicula }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="seccion">
+
+            <div class="formulario">
+                <h2>Agregar Serie</h2>
+                <form method="post" action="{% url 'produccion' %}">
+                    {% csrf_token %}
+                    {{ serie_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Serie</button>
+                </form>
+
+            </div>
+
+            <div class="listado">
+                <h2>Series</h2>
+                <ul>
+                    {% for serie in serie_list %}
+                    <li>{{ serie }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+
 
     </main>
 
     {% include 'footer.html' %}
-    
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+ 
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var contenido_id = button.getAttribute('contenido_id');
+                    var popup = document.getElementById('popup-' + contenido_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+    </script>
+
 </body>
+
 </html>

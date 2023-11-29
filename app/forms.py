@@ -2,9 +2,44 @@
 from django import forms
 from .models import *
 
+# Subsistema de Contabilidad
+
 class IngresoForm(forms.ModelForm):
     class Meta:
         model = Ingreso
         fields = ['Codigo', 'Fecha', 'Autor', 'Cantidad']
 
+class GastoForm(forms.ModelForm):
+    class Meta:
+        model = Gasto
+        fields = '__all__'
 
+
+# Subsistema de recursos humanos
+
+class TrabajadorForm(forms.ModelForm):
+    class Meta:
+        model = Trabajador
+        fields = '__all__'
+
+class DepartamentoForm(forms.ModelForm):
+    class Meta:
+        model = Departamento
+        fields = '__all__'
+
+# Subsistema de producción
+
+class ContenidoForm(forms.ModelForm):
+    class Meta:
+        model = Contenido
+        fields = '__all__'
+
+class PeliculaForm(forms.ModelForm):
+    class Meta:
+        model = Pelicula
+        fields = '__all__'
+
+class SerieForm(forms.ModelForm):
+    class Meta:
+        model = Serie
+        fields = '__all__'
