@@ -26,6 +26,29 @@ class Gasto(models.Model):
 
 Gasto._meta.app_label = 'app'
 
+# Subsistema de gestión de clientes
+
+class Cliente(models.Model):
+    DNICl = models.CharField(max_length=9, primary_key=True)
+    Teléfono = models.PositiveIntegerField()
+    Nombre = models.CharField(max_length=40)
+    Correo = models.EmailField(max_length=30)
+
+    def _str_(self):
+        return self.Nombre
+    
+Cliente._meta.app_label = 'app'
+
+class Suscripcion(models.Model):
+    DatosSuscripcion = models.CharField(max_length=30, primary_key=True)
+    Tipo = models.CharField(max_length=10, choices=[('Mensual', 'Mensual'), ('Anual', 'Anual')], default='Mensual')
+    Nivel = models.CharField(max_length=10, choices=[('Estandar', 'Estandar'), ('Premium', 'Premium')], default='Estandar')
+
+    def _str_(self):
+        return self.DatosSuscripcion
+    
+Suscripcion._meta.app_label = 'app'
+
 # Subsistema de recursos humanos
 
 class Trabajador(models.Model):
@@ -44,16 +67,6 @@ class Departamento(models.Model):
 
     def __str__(self):
         return self.NombreDep
-
-class Pertenece(models.Model):
-    DNIT = models.CharField(max_length=9, primary_key=True)
-    NombreDep = models.CharField(max_length=20)
-    trabajador = models.ForeignKey('Trabajador', on_delete=models.CASCADE)
-    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.DNIT} - {self.NombreDep}"
-
 
 # Subsistema de producción
 
@@ -88,7 +101,7 @@ class Contenido(models.Model):
 
 class Pelicula(models.Model):
     Titulo = models.CharField(max_length=100)
-    Fecha = models.DateField()
+    Fecha = models.DateField(default='2023-01-01')
     Duracion = models.IntegerField(null=False)
 
     contenido = models.OneToOneField(Contenido, on_delete=models.CASCADE, primary_key=True)
@@ -115,6 +128,35 @@ class Serie(models.Model):
 
     def __str__(self):
         return f"{self.contenido.Titulo} ({self.contenido.Fecha} - Temporadas: {self.Temporadas})"
+    
+
+# Relaciones entre entidades
+
+class QuejaRecomendacion(models.Model):
+    CodigoQueja = models.CharField(max_length=6, primary_key=True)
+    Contenido = models.CharField(max_length=1000)
+
+    def _str_(self):
+        return self.CodigoQueja
+
+class Tiene(models.Model):
+    CodigoQueja = models.CharField(max_length=6, primary_key=True)
+    NombreDep = models.CharField(max_length=20)
+    queja = models.ForeignKey('QuejaRecomendacion', on_delete=models.CASCADE)
+    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
+
+    def _str_(self):
+        return f"{self.CodigoQueja} - {self.NombreDep}"
+
+class Pertenece(models.Model):
+    DNIT = models.CharField(max_length=9, primary_key=True)
+    NombreDep = models.CharField(max_length=20)
+    trabajador = models.ForeignKey('Trabajador', on_delete=models.CASCADE)
+    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.DNIT} - {self.NombreDep}"
+    
     
 class GastoContenido(models.Model):
     Codigo = models.CharField(max_length=8, primary_key=True)

@@ -22,13 +22,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('contabilidad/', contabilidad, name='contabilidad'),
-    path('borrar/<str:codigo>/', borrar_ingreso, name='borrar_ingreso'),
-    path('borrar_gastos/<str:codigo>/', borrar_gasto, name='borrar_gasto'),
-
-    path('editar/<str:codigo>/', editar_ingreso, name='editar_ingreso'),
-    path('mostrar_ingresos/', mostrar_ingresos, name='mostrar_ingresos'),
+    path('borrar_ingreso/<str:codigo>/', borrar_ingreso, name='borrar_ingreso'),
+    path('borrar_gasto/<str:codigo>/', borrar_gasto, name='borrar_gasto'),
+    path('editar_ingreso/<str:codigo>/', editar_ingreso, name='editar_ingreso'),
+    path('editar_gasto/<str:codigo>/', editar_gasto, name='editar_gasto'),
 
     path('gestion_de_clientes/', gestion_de_clientes, name='gestion_de_clientes'),
+    path('borrar_cliente/<str:cliente_id>/', borrar_cliente, name='borrar_cliente'),
+    path('borrar_suscripcion/<str:suscripcion_id>/', borrar_suscripcion, name='borrar_suscripcion'),
 
     path('recursos_humanos/', recursos_humanos, name='recursos_humanos'),
     path('borrar_trabajdor/<str:trabajador_id>/', borrar_trabajador, name='borrar_trabajador'),

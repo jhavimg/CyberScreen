@@ -41,13 +41,13 @@ def contabilidad(request):
             return redirect('contabilidad')
         
     # Listar gastos
-    gastos_list = Gasto.objects.all()
+    gasto_list = Gasto.objects.all()
 
     return render(request, 'contabilidad.html', {
         'ingreso_form': ingreso_form,
         'ingreso_list': ingresos_list,
         'gasto_form': gasto_form,
-        'gastos_list': gastos_list,
+        'gasto_list': gasto_list,
     })
 
 def borrar_ingreso(request, codigo):
@@ -64,30 +64,74 @@ def borrar_gasto(request, codigo):
         return redirect('contabilidad')
     return render(request, 'contabilidad.html', {'gasto': gasto})
 
-def mostrar_ingresos(request):
-    ingresos = Ingreso.objects.all()
-    form = IngresoForm()
-
-    if request.method == 'POST':
-        form = IngresoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('mostrar_ingresos')
-
-    return render(request, 'mostrar_ingresos.html', {'ingresos': ingresos, 'form': form})
-
 def editar_ingreso(request, codigo):
     ingreso = get_object_or_404(Ingreso, Codigo=codigo)
     if request.method == 'POST':
         form = IngresoForm(request.POST, instance=ingreso)
         if form.is_valid():
             form.save()
-            return redirect('lista_ingresos')
+            return redirect('contabilidad')
     else:
         form = IngresoForm(instance=ingreso)
-    return render(request, 'editar_ingreso.html', {'form': form, 'ingreso': ingreso})
+    return render(request, 'contabilidad.html', {'form': form, 'ingreso': ingreso})
 
+def editar_gasto(request, codigo):
+    gasto = get_object_or_404(Gasto, Codigo=codigo)
+    if request.method == 'POST':
+        form = GastoForm(request.POST, instance=gasto)
+        if form.is_valid():
+            form.save()
+            return redirect ('contabilidad')
+    else:
+        form = GastoForm(instance=gasto)
+    return render(request, 'contabilidad.html', {'form': form, 'gasto': gasto})
 
+# Subsistema de Gestión de clientes
+
+def gestion_de_clientes(request):
+    cliente_form = ClienteForm()
+    suscripcion_form = SuscripcionForm()
+
+    # Agregar Cliente
+    if request.method == 'POST':
+        cliente_form = ClienteForm(request.POST)
+        if cliente_form.is_valid():
+            cliente_form.save()
+            return redirect('gestion_de_clientes')
+    
+    #Listar Clientes
+    cliente_list = Cliente.objects.all()
+
+    # Agregar Suscripcion
+    if request.method == 'POST':
+        suscripcion_form = SuscripcionForm(request.POST)
+        if suscripcion_form.is_valid():
+            suscripcion_form.save()
+            return redirect('gestion_de_clientes')
+        
+    # Listar Suscripcion
+    suscripcion_list = Suscripcion.objects.all()
+
+    return render(request, 'gestion_de_clientes.html', {
+        'cliente_form': cliente_form,
+        'cliente_list': cliente_list,
+        'suscripcion_form': suscripcion_form,
+        'suscripcion_list': suscripcion_list,
+    })
+
+def borrar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, DNICl=cliente_id)
+    if request.method == 'POST':
+        cliente.delete()
+        return redirect('gestion_de_clientes')
+    return render(request, 'gestion_de_clientes.html', {'cliente': cliente})
+
+def borrar_suscripcion(request, suscripcion_id):
+    suscripcion = get_object_or_404(Suscripcion, DatosSuscripcion=suscripcion_id)
+    if request.method == 'POST':
+        suscripcion.delete()
+        return redirect('gestion_de_clientes')
+    return render(request, 'gestion_de_clientes.html', {'suscripcion': suscripcion})
 
 # Subsistema de Recursos Humanos
 

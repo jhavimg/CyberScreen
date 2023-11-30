@@ -14,6 +14,17 @@ class GastoForm(forms.ModelForm):
         model = Gasto
         fields = '__all__'
 
+# Subsistema de gestión de clientes
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+
+class SuscripcionForm(forms.ModelForm):
+    class Meta:
+        model = Suscripcion
+        fields = '__all__'
 
 # Subsistema de recursos humanos
 
