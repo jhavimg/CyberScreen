@@ -16,13 +16,107 @@
 
     {% include 'header.html' %}
 
+    <h1>Subsistema de Gestión de clientes</h1>
+
     <main>
 
-        <h1>Gestión de clientes</h1>
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Dar de alta cliente</h2>
+                <form method="post" action="{% url 'gestion_de_clientes' %}">
+                    {% csrf_token %}
+                    {{ cliente_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Cliente</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Listar clientes</h2>
+                <ul>
+                    {% for cliente in cliente_list %}
+                    <li>{{ cliente.DNICl }} - {{ cliente.Teléfono }} - {{ cliente.Nombre }} - {{ cliente.Correo }}
+                    <div class="contenedor-botones">
+                        <button type="button" class="mostrarpop btn btn-outline-danger" cliente_id="{{ cliente.DNICl }}">Borrar</button>
+                    </div>
+
+                    <dialog id="popup-{{ cliente.DNICl }}" class="flotante">
+                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ cliente.DNICl }}"?</p>
+                        <form method="post" action="{% url 'borrar_cliente' cliente.DNICl %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                        </form>
+                        <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                    </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Dar de alta suscripcion</h2>
+                <form method="post" action="{% url 'gestion_de_clientes' %}">
+                    {% csrf_token %}
+                    {{ suscripcion_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar Suscripcion</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Listar Suscripciones</h2>
+                <ul>
+                    {% for suscripcion in suscripcion_list %}
+                    <li>{{ suscripcion.DatosSuscripcion }} - {{ suscripcion.Tipo }} - {{ suscripcion.Nivel }}
+                    <div class="contenedor-botones">
+                        <button type="button" class="mostrarpop btn btn-outline-danger" suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Borrar</button>
+                    </div>
+
+                    <dialog id="popup-{{ suscripcion.DatosSuscripcion }}" class="flotante">
+                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ suscripcion.DatosSuscripcion }}"?</p>
+                        <form method="post" action="{% url 'borrar_suscripcion' suscripcion.DatosSuscripcion %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                        </form>
+                        <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                    </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
     </main>
 
     {% include 'footer.html' %}
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+ 
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var cliente_id = button.getAttribute('cliente_id');
+                    var popup = document.getElementById('popup-' + cliente_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+ 
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var suscripcion_id = button.getAttribute('suscripcion_id');
+                    var popup = document.getElementById('popup-' + suscripcion_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+    </script>
     
 </body>
 </html>
