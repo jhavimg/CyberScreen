@@ -41,5 +41,21 @@ class Pertenece(models.Model):
     def __str__(self):
         return f"{self.DNIT} - {self.NombreDep}"
 
+class QuejaRecomendacion(models.Model):
+    CodigoQueja = models.CharField(max_length=6, primary_key=True)
+    Contenido = models.CharField(max_length=1000)
+
+    def __str__(self):
+        return self.CodigoQueja
+
+class Tiene(models.Model):
+    CodigoQueja = models.CharField(max_length=6, primary_key=True)
+    NombreDep = models.CharField(max_length=20)
+    queja = models.ForeignKey('QuejaRecomendacion', on_delete=models.CASCADE)
+    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.CodigoQueja} - {self.NombreDep}"
+    
 
 
