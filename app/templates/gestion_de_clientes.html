@@ -36,6 +36,7 @@
                     <li>{{ cliente.DNICl }} - {{ cliente.Teléfono }} - {{ cliente.Nombre }} - {{ cliente.Correo }}
                     <div class="contenedor-botones">
                         <button type="button" class="mostrarpop btn btn-outline-danger" cliente_id="{{ cliente.DNICl }}">Borrar</button>
+                        <button type="button" class="editar-cliente btn btn-outline-warning" cliente_id="{{ cliente.DNICl }}">Editar</button>
                     </div>
 
                     <dialog id="popup-{{ cliente.DNICl }}" class="flotante">
@@ -45,6 +46,15 @@
                             <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
                         </form>
                         <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                    </dialog>
+
+                    <dialog id="popup-editar-{{ cliente.DNICl }}" class="flotante">
+                        <p>Estas editando el cliente con DNI: {{ cliente.DNICl }}</p>
+                        <form method="post" action="{% url 'editar_cliente' cliente.DNICl %}">
+                            {% csrf_token %}
+                            {{ cliente_form.as_p }}
+                            <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                        </form>
                     </dialog>
 
                     </li>
@@ -69,6 +79,7 @@
                     <li>{{ suscripcion.DatosSuscripcion }} - {{ suscripcion.Tipo }} - {{ suscripcion.Nivel }}
                     <div class="contenedor-botones">
                         <button type="button" class="mostrarpop btn btn-outline-danger" suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Borrar</button>
+                        <button type="button" class="editar-suscripcion btn btn-outline-warning" suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Editar</button>
                     </div>
 
                     <dialog id="popup-{{ suscripcion.DatosSuscripcion }}" class="flotante">
@@ -78,6 +89,15 @@
                             <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
                         </form>
                         <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                    </dialog>
+
+                    <dialog id="popup-editar-{{ suscripcion.DatosSuscripcion }}" class="flotante">
+                        <p>Estas editando la suscripcion con código: {{ suscripcion.DatosSuscripcion }}</p>
+                        <form method="post" action="{% url 'editar_suscripcion' suscripcion.DatosSuscripcion %}">
+                            {% csrf_token %}
+                            {{ suscripcion_form.as_p }}
+                            <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                        </form>
                     </dialog>
 
                     </li>
@@ -91,7 +111,7 @@
     {% include 'footer.html' %}
 
     <script>
-
+        // Borrar cliente
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
  
@@ -104,6 +124,7 @@
             });
         });
 
+        // Borrar suscripcion
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
  
@@ -111,6 +132,32 @@
                 button.addEventListener('click', function () {
                     var suscripcion_id = button.getAttribute('suscripcion_id');
                     var popup = document.getElementById('popup-' + suscripcion_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Editar cliente
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.editar-cliente');
+ 
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var cliente_id = button.getAttribute('cliente_id');
+                    var popup = document.getElementById('popup-editar-' + cliente_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Editar suscripcion
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.editar-suscripcion');
+ 
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var suscripcion_id = button.getAttribute('suscripcion_id');
+                    var popup = document.getElementById('popup-editar-' + suscripcion_id);
                     popup.showModal();
                 });
             });

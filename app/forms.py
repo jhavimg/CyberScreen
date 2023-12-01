@@ -38,6 +38,11 @@ class DepartamentoForm(forms.ModelForm):
         model = Departamento
         fields = '__all__'
 
+class QuejaRecomendacionForm(forms.ModelForm):
+    class Meta:
+        model = QuejaRecomendacion
+        fields = '__all__'
+
 # Subsistema de producción
 
 class ContenidoForm(forms.ModelForm):
@@ -53,4 +58,11 @@ class PeliculaForm(forms.ModelForm):
 class SerieForm(forms.ModelForm):
     class Meta:
         model = Serie
+        fields = '__all__'
+
+# Relaciones entre entidades
+
+class PerteneceForm(forms.ModelForm):
+    class Meta:
+        model = Pertenece
         fields = '__all__'

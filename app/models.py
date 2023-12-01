@@ -67,6 +67,13 @@ class Departamento(models.Model):
 
     def __str__(self):
         return self.NombreDep
+    
+class QuejaRecomendacion(models.Model):
+    CodigoQueja = models.CharField(max_length=6, primary_key=True)
+    Contenido = models.CharField(max_length=1000)
+
+    def _str_(self):
+        return self.CodigoQueja
 
 # Subsistema de producción
 
@@ -131,13 +138,6 @@ class Serie(models.Model):
     
 
 # Relaciones entre entidades
-
-class QuejaRecomendacion(models.Model):
-    CodigoQueja = models.CharField(max_length=6, primary_key=True)
-    Contenido = models.CharField(max_length=1000)
-
-    def _str_(self):
-        return self.CodigoQueja
 
 class Tiene(models.Model):
     CodigoQueja = models.CharField(max_length=6, primary_key=True)

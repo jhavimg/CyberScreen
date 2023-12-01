@@ -39,11 +39,13 @@
                 <ul>
                     {% for trabajador in trabajador_list %}
                     <li>
-                        {{ trabajador.DNIT }} - {{ trabajador.Nombre }} - {{ trabajador.Apellidos }} - 
+                        {{ trabajador.DNIT }} - {{ trabajador.Nombre }} - {{ trabajador.Apellidos }} -
                         {{ trabajador.Teléfono }} - {{ trabajador.CorreoElectronico}}
                         <div class="contenedor-botones">
                             <button type="button" class="mostrarpop btn btn-outline-danger"
                                 trabajador_id="{{ trabajador.DNIT }}">Borrar</button>
+                            <button type="button" class="editar-trabajador btn btn-outline-warning"
+                                trabajador_id="{{ trabajador.DNIT }}">Editar</button>
                         </div>
 
                         <dialog id="popup-{{ trabajador.DNIT }}" class="flotante">
@@ -53,6 +55,15 @@
                                 <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
                             </form>
                             <a href="{% url 'recursos_humanos' %}">Cancelar</a>
+                        </dialog>
+
+                        <dialog id="popup-editar-{{ trabajador.DNIT }}" class="flotante">
+                            <p>Estas editando el trabajador con DNI: {{ trabajador.DNIT }}</p>
+                            <form method="post" action="{% url 'editar_trabajador' trabajador.DNIT %}">
+                                {% csrf_token %}
+                                {{ trabajador_form.as_p }}
+                                <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                            </form>
                         </dialog>
 
                     </li>
@@ -80,11 +91,56 @@
                         <div class="contenedor-botones">
                             <button type="button" class="mostrarpop btn btn-outline-danger"
                                 departamento_id="{{ departamento.NombreDep }}">Borrar</button>
+                            <button type="button" class="editar-departamento btn btn-outline-warning"
+                                departamento_id="{{ departamento.NombreDep }}">Editar</button>
                         </div>
 
                         <dialog id="popup-{{ departamento.NombreDep }}" class="flotante">
                             <p>¿Estás seguro de que deseas borrar el departamento:"{{ departamento.NombreDep }}"?</p>
                             <form method="post" action="{% url 'borrar_departamento' departamento.NombreDep %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'recursos_humanos' %}">Cancelar</a>
+                        </dialog>
+
+                        <dialog id="popup-editar-{{ departamento.NombreDep }}" class="flotante">
+                            <p>Estas editando el departamento con nombre: {{ departamento.NombreDep }}</p>
+                            <form method="post" action="{% url 'editar_departamento' departamento.NombreDep %}">
+                                {% csrf_token %}
+                                {{ departamento_form.as_p }}
+                                <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                            </form>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Establecer a que departamento pertenece un trabajador</h2>
+                <form method="post" action="{% url 'recursos_humanos' %}">
+                    {% csrf_token %}
+                    {{ pertenece_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Agregar el trabajador al departamento</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Listar Trabajador-Departamento</h2>
+                <ul>
+                    {% for pertenece in pertenece_list %}
+                    <li>{{ pertenece.DNIT }} - {{ pertenece.NombreDep }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                pertenece_id="{{ pertenece.DNIT }}">Borrar</button>
+                        </div>
+
+                        <dialog id="popup-{{ departamento.NombreDep }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar la relacion : {{ pertenece.DNIT }}-{{ pertenece.NombreDep }}?</p>
+                            <form method="post" action="{% url 'borrar_pertenece' pertenece.DNIT %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
                             </form>
@@ -102,7 +158,7 @@
     {% include 'footer.html' %}
 
     <script>
-
+        // Borrar trabajador
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
 
@@ -115,6 +171,7 @@
             });
         });
 
+        // Borrar departamento
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
 
@@ -122,6 +179,32 @@
                 button.addEventListener('click', function () {
                     var departamento_id = button.getAttribute('departamento_id');
                     var popup = document.getElementById('popup-' + departamento_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Editar trabajador
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.editar-trabajador');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var trabajador_id = button.getAttribute('trabajador_id');
+                    var popup = document.getElementById('popup-editar-' + trabajador_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Editar departamento
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.editar-departamento');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var departamento_id = button.getAttribute('departamento_id');
+                    var popup = document.getElementById('popup-editar-' + departamento_id);
                     popup.showModal();
                 });
             });
