@@ -133,11 +133,34 @@ def borrar_suscripcion(request, suscripcion_id):
         return redirect('gestion_de_clientes')
     return render(request, 'gestion_de_clientes.html', {'suscripcion': suscripcion})
 
+def editar_cliente(request, cliente_id):
+    cliente = get_object_or_404(Cliente, DNICl=cliente_id)
+    if request.method == 'POST':
+        form = ClienteForm(request.POST, instance=cliente)
+        if form.is_valid():
+            form.save()
+            return redirect('gestion_de_clientes')
+    else:
+        form = IngresoForm(instance=cliente)
+    return render(request, 'gestion_de_clientes.html', {'form': form, 'cliente': cliente})
+
+def editar_suscripcion(request, suscripcion_id):
+    suscripcion = get_object_or_404(Suscripcion, DatosSuscripcion=suscripcion_id)
+    if request.method == 'POST':
+        form = SuscripcionForm(request.POST, instance=suscripcion)
+        if form.is_valid():
+            form.save()
+            return redirect('gestion_de_clientes')
+    else:
+        form = IngresoForm(instance=suscripcion)
+    return render(request, 'gestion_de_clientes.html', {'form': form, 'suscripcion': suscripcion})
+
 # Subsistema de Recursos Humanos
 
 def recursos_humanos(request):
     trabajador_form = TrabajadorForm()
     departamento_form = DepartamentoForm()
+    pertenece_form = PerteneceForm()
 
     # Agregar Trabajador
     if request.method == 'POST':
@@ -161,11 +184,23 @@ def recursos_humanos(request):
     # Listar Departamentos
     departamento_list = Departamento.objects.all()
 
+    # Agregar relación pertenece
+    if request.method == 'POST':
+        pertenece_form = PerteneceForm(request.POST)
+        if pertenece_form.is_valid():
+            pertenece_form.save()
+            return redirect('recursos_humanos')
+    
+    # Listar relación pertenece
+    pertenece_list = Pertenece.objects.all()
+
     return render(request, 'recursos_humanos.html', {
         'trabajador_form': trabajador_form,
         'trabajador_list': trabajador_list,
         'departamento_form': departamento_form,
         'departamento_list': departamento_list,
+        'pertenece_form': pertenece_form,
+        'pertenece_list': pertenece_list,
     })
 
 def borrar_trabajador(request, trabajador_id):
@@ -182,6 +217,34 @@ def borrar_departamento(request, departamento_id):
         return redirect('recursos_humanos')
     return render(request, 'recursos_humanos.html', {'departamento': departamento})
 
+def borrar_pertenece(request, pertenece_id):
+    pertenece = get_object_or_404(Pertenece, DNIT=pertenece_id)
+    if request.method == 'POST':
+        pertenece.delete()
+        return redirect('recursos_humanos')
+    return render(request, 'recursos_humanos.html', {'pertenece': pertenece})
+
+def editar_trabajador(request, trabajador_id):
+    trabajador = get_object_or_404(Trabajador, DNIT=trabajador_id)
+    if request.method == 'POST':
+        form = TrabajadorForm(request.POST, instance=trabajador)
+        if form.is_valid():
+            form.save()
+            return redirect('recursos_humanos')
+    else:
+        form = IngresoForm(instance=trabajador)
+    return render(request, 'recursos_humanos.html', {'form': form, 'trabajador': trabajador})
+
+def editar_departamento(request, departamento_id):
+    departamento = get_object_or_404(Departamento, NombreDep=departamento_id)
+    if request.method == 'POST':
+        form = DepartamentoForm(request.POST, instance=departamento)
+        if form.is_valid():
+            form.save()
+            return redirect('recursos_humanos')
+    else:
+        form = IngresoForm(instance=departamento)
+    return render(request, 'recursos_humanos.html', {'form': form, 'departamento': departamento})
 
 # Subsistema de Producción
 
