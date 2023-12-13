@@ -132,14 +132,14 @@
                 <h2>Listar Trabajador-Departamento</h2>
                 <ul>
                     {% for pertenece in pertenece_list %}
-                    <li>{{ pertenece.DNIT }} - {{ pertenece.NombreDep }}
+                    <li>{{ pertenece.trabajador }} - {{ pertenece.departamento }}
                         <div class="contenedor-botones">
                             <button type="button" class="mostrarpop btn btn-outline-danger"
-                                pertenece_id="{{ pertenece.DNIT }}">Borrar</button>
+                                pertenece_id="{{ pertenece.trabajador }}">Borrar</button>
                         </div>
 
-                        <dialog id="popup-{{ departamento.NombreDep }}" class="flotante">
-                            <p>¿Estás seguro de que deseas borrar la relacion : {{ pertenece.DNIT }}-{{ pertenece.NombreDep }}?</p>
+                        <dialog id="popup-pertenece-{{ pertenece.trabajador }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar la relacion : {{ pertenece.trabajador }} - {{ pertenece.departamento }}?</p>
                             <form method="post" action="{% url 'borrar_pertenece' pertenece.DNIT %}">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
@@ -205,6 +205,19 @@
                 button.addEventListener('click', function () {
                     var departamento_id = button.getAttribute('departamento_id');
                     var popup = document.getElementById('popup-editar-' + departamento_id);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Borrar relación pertenece
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.mostrarpop');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var pertenece_id = button.getAttribute('pertenece_id');
+                    var popup = document.getElementById('popup-pertenece-' + pertenece_id);
                     popup.showModal();
                 });
             });

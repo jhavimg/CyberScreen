@@ -113,6 +113,39 @@
                 </ul>
             </div>
         </div>
+        <div class="seccion">
+            <div class="formulario">
+                <h2>Dar de alta gasto contenido</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ gastocontenido_form.as_p }}
+                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+            <div class="listado">
+                <h2>Listar gastos de contenido</h2>
+                <ul>
+                    {% for gastocontenido in gastocontenido_list %}
+                    <li>
+                        {{ gastocontenido.Titulo }} - {{ gastocontenido.Fecha }} - {{ gastocontenido.Codigo }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="borrar-gastocontenido btn btn-outline-danger" gastocontenido_id="{{ gastocontenido.Codigo }}">Borrar</button>
+                        </div>
+
+
+                        <dialog id="popup-borrar-gastocontenido-{{ gastocontenido.Codigo }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el gasto con código:"{{ gastocontenido.Codigo }}"?</p>
+                            <form method="post" action="{% url 'borrar_gastocontenido' gastocontenido.Codigo %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'contabilidad' %}">Cancelar</a>
+                        </dialog>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
 
     </main>
 
@@ -163,6 +196,19 @@
                 button.addEventListener('click', function () {
                     var codigo = button.getAttribute('gasto_id');
                     var popup = document.getElementById('popup-editar-gasto-' + codigo);
+                    popup.showModal();
+                });
+            });
+        });
+
+        // Borrar relación gasto contenido
+        document.addEventListener('DOMContentLoaded', function () {
+            var buttons = document.querySelectorAll('.borrar-gastocontenido');
+
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var gastocontenido_id = button.getAttribute('gastocontenido_id');
+                    var popup = document.getElementById('popup-borrar-gastocontenido-' + gastocontenido_id);
                     popup.showModal();
                 });
             });

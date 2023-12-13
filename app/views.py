@@ -22,6 +22,7 @@ def produccion(request):
 def contabilidad(request):
     ingreso_form = IngresoForm()
     gasto_form = GastoForm()
+    gastocontenido_form = GastoContenidoForm()
 
     # Agregar ingreso
     if request.method == 'POST':
@@ -43,11 +44,23 @@ def contabilidad(request):
     # Listar gastos
     gasto_list = Gasto.objects.all()
 
+    # Agregar gasto-contenido
+    if request.method == 'POST':
+        gastocontenido_form = GastoContenidoForm(request.POST)
+        if gastocontenido_form.is_valid():
+            gastocontenido_form.save()
+            return redirect('contabilidad')
+
+    # Listar gasto-contenido
+    gastocontenido_list = GastoContenido.objects.all()
+
     return render(request, 'contabilidad.html', {
         'ingreso_form': ingreso_form,
         'ingreso_list': ingresos_list,
         'gasto_form': gasto_form,
         'gasto_list': gasto_list,
+        'gastocontenido_form': gastocontenido_form,
+        'gastocontenido_list': gastocontenido_list,
     })
 
 def borrar_ingreso(request, codigo):
@@ -63,6 +76,13 @@ def borrar_gasto(request, codigo):
         gasto.delete()
         return redirect('contabilidad')
     return render(request, 'contabilidad.html', {'gasto': gasto})
+
+def borrar_gastocontenido(request, codigo):
+    gastocontenido = get_object_or_404(GastoContenido, Codigo=codigo)
+    if request.method == 'POST':
+        gastocontenido.delete()
+        return redirect ('contabilidad')
+    return render(request, 'contabilidad.html', {'gastocontenido': gastocontenido})
 
 def editar_ingreso(request, codigo):
     ingreso = get_object_or_404(Ingreso, Codigo=codigo)
@@ -91,6 +111,7 @@ def editar_gasto(request, codigo):
 def gestion_de_clientes(request):
     cliente_form = ClienteForm()
     suscripcion_form = SuscripcionForm()
+    obtiene_form = ObtieneForm()
 
     # Agregar Cliente
     if request.method == 'POST':
@@ -112,11 +133,23 @@ def gestion_de_clientes(request):
     # Listar Suscripcion
     suscripcion_list = Suscripcion.objects.all()
 
+    # Agregar relación obtiene
+    if request.method == 'POST':
+        obtiene_form = ObtieneForm(request.POST)
+        if obtiene_form.is_valid():
+            obtiene_form.save()
+            return redirect('gestion_de_clientes')
+
+    # Listar relación obtiene
+    obtiene_list = Obtiene.objects.all()
+
     return render(request, 'gestion_de_clientes.html', {
         'cliente_form': cliente_form,
         'cliente_list': cliente_list,
         'suscripcion_form': suscripcion_form,
         'suscripcion_list': suscripcion_list,
+        'obtiene_form': obtiene_form,
+        'obtiene_list': obtiene_list,
     })
 
 def borrar_cliente(request, cliente_id):
@@ -132,6 +165,13 @@ def borrar_suscripcion(request, suscripcion_id):
         suscripcion.delete()
         return redirect('gestion_de_clientes')
     return render(request, 'gestion_de_clientes.html', {'suscripcion': suscripcion})
+
+def borrar_obtiene(request, obtiene_id):
+    obtiene = get_object_or_404(Obtiene, DatosSucripcion=obtiene_id)
+    if request.method == 'POST':
+        obtiene.delete()
+        return redirect('gestion_de_clientes')
+    return render(request, 'gestion_de_clientes.html', {'obtiene': obtiene})
 
 def editar_cliente(request, cliente_id):
     cliente = get_object_or_404(Cliente, DNICl=cliente_id)

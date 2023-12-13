@@ -139,15 +139,6 @@ class Serie(models.Model):
 
 # Relaciones entre entidades
 
-class Tiene(models.Model):
-    CodigoQueja = models.CharField(max_length=6, primary_key=True)
-    NombreDep = models.CharField(max_length=20)
-    queja = models.ForeignKey('QuejaRecomendacion', on_delete=models.CASCADE)
-    departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
-
-    def _str_(self):
-        return f"{self.CodigoQueja} - {self.NombreDep}"
-
 class Pertenece(models.Model):
     DNIT = models.CharField(max_length=9, primary_key=True)
     NombreDep = models.CharField(max_length=20)
@@ -155,8 +146,7 @@ class Pertenece(models.Model):
     departamento = models.ForeignKey('Departamento', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.DNIT} - {self.NombreDep}"
-    
+        return f"{self.DNIT}"
     
 class GastoContenido(models.Model):
     Codigo = models.CharField(max_length=8, primary_key=True)
@@ -168,3 +158,15 @@ class GastoContenido(models.Model):
 
     def __str__(self):
         return f"{self.Codigo} - {self.Titulo} ({self.Fecha})"
+    
+class Obtiene(models.Model):
+    DatosSuscripcion = models.CharField(max_length=30, primary_key=True)
+    DNICl = models.CharField(max_length=9, unique=True)
+    Precio = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    
+    suscripcion = models.ForeignKey('Suscripcion', on_delete=models.CASCADE, related_name='obtenciones')
+    cliente = models.ForeignKey('Cliente', on_delete=models.CASCADE, related_name='obtenciones')
+
+    def _str_(self):
+        return f"{self.DatosSuscripcion} - {self.DNICl}"
+    

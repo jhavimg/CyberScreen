@@ -66,3 +66,13 @@ class PerteneceForm(forms.ModelForm):
     class Meta:
         model = Pertenece
         fields = '__all__'
+
+class GastoContenidoForm(forms.ModelForm):
+    class Meta:
+        model = GastoContenido
+        fields = '__all__'
+
+class ObtieneForm(forms.ModelForm):
+    class Meta:
+        model = Obtiene
+        fields = '__all__'
