@@ -20,144 +20,131 @@ def produccion(request):
 # Subsistema de contabilidad
 
 def contabilidad(request):
-    ingreso_form = IngresoForm()
-    gasto_form = GastoForm()
+    ingreso_genera_form = IngresoGeneraForm()
     gastocontenido_form = GastoContenidoForm()
+    pagosalario_form = PagoSalarioForm()
+    gasto_contenido_salario_form = GastoContenidoSalarioForm()
 
-    # Agregar ingreso
     if request.method == 'POST':
-        ingreso_form = IngresoForm(request.POST)
-        if ingreso_form.is_valid():
-            ingreso_form.save()
-            return redirect('contabilidad')
+        if 'action' in request.POST and request.POST['action'] == 'add_ingreso':
+            ingreso_genera_form = IngresoGeneraForm(request.POST)
+            if ingreso_genera_form.is_valid():
+                ingreso_genera_form.save()
+                return redirect('contabilidad')
+
+        elif 'action' in request.POST and request.POST['action'] == 'add_gastocontenido':
+            gastocontenido_form = GastoContenidoForm(request.POST)
+            if gastocontenido_form.is_valid():
+                GastoContenidoSalario.objects.create(
+                    Codigo=gastocontenido_form.cleaned_data['Codigo'],
+                    Fecha=gastocontenido_form.cleaned_data['Fecha'],
+                    Autor=gastocontenido_form.cleaned_data['Autor'],
+                    Cantidad=gastocontenido_form.cleaned_data['Cantidad'],
+                    Contenido=gastocontenido_form.cleaned_data['Contenido'],
+                )
+                return redirect('contabilidad')
+
+        elif 'action' in request.POST and request.POST['action'] == 'add_pagosalario':
+            pagosalario_form = PagoSalarioForm(request.POST)
+            if pagosalario_form.is_valid():
+                GastoContenidoSalario.objects.create(
+                    Codigo=pagosalario_form.cleaned_data['Codigo'],
+                    Fecha=pagosalario_form.cleaned_data['Fecha'],
+                    Autor=pagosalario_form.cleaned_data['Autor'],
+                    DNIT=pagosalario_form.cleaned_data['DNIT'],
+                    Cantidad=pagosalario_form.cleaned_data['Cantidad'],
+                )
+                return redirect('contabilidad')
         
     # Listar ingresos
-    ingresos_list = Ingreso.objects.all()
+    ingresos_list = IngresoGenera.objects.all()
 
-    # Agregar gasto
-    if request.method == 'POST':
-        gasto_form = GastoForm(request.POST)
-        if gasto_form.is_valid():
-            gasto_form.save()
-            return redirect('contabilidad')
-        
     # Listar gastos
-    gasto_list = Gasto.objects.all()
-
-    # Agregar gasto-contenido
-    if request.method == 'POST':
-        gastocontenido_form = GastoContenidoForm(request.POST)
-        if gastocontenido_form.is_valid():
-            gastocontenido_form.save()
-            return redirect('contabilidad')
-
-    # Listar gasto-contenido
-    gastocontenido_list = GastoContenido.objects.all()
+    gasto_list = GastoContenidoSalario.objects.all()
 
     return render(request, 'contabilidad.html', {
-        'ingreso_form': ingreso_form,
+        'ingreso_genera_form': ingreso_genera_form,
         'ingreso_list': ingresos_list,
-        'gasto_form': gasto_form,
-        'gasto_list': gasto_list,
         'gastocontenido_form': gastocontenido_form,
-        'gastocontenido_list': gastocontenido_list,
+        'pagosalario_form': pagosalario_form,
+        'gasto_list': gasto_list,
+        'gasto_contenido_salario_form': gasto_contenido_salario_form,
     })
 
 def borrar_ingreso(request, codigo):
-    ingreso = get_object_or_404(Ingreso, Codigo=codigo)
+    ingreso = get_object_or_404(IngresoGenera, Codigo=codigo)
     if request.method == 'POST':
         ingreso.delete()
         return redirect('contabilidad')
     return render(request, 'contabilidad.html', {'ingreso': ingreso})
 
 def borrar_gasto(request, codigo):
-    gasto = get_object_or_404(Gasto, Codigo=codigo)
+    gasto = get_object_or_404(GastoContenidoSalario, Codigo=codigo)
     if request.method == 'POST':
         gasto.delete()
         return redirect('contabilidad')
     return render(request, 'contabilidad.html', {'gasto': gasto})
 
-def borrar_gastocontenido(request, codigo):
-    gastocontenido = get_object_or_404(GastoContenido, Codigo=codigo)
-    if request.method == 'POST':
-        gastocontenido.delete()
-        return redirect ('contabilidad')
-    return render(request, 'contabilidad.html', {'gastocontenido': gastocontenido})
-
 def editar_ingreso(request, codigo):
-    ingreso = get_object_or_404(Ingreso, Codigo=codigo)
+    ingreso = get_object_or_404(IngresoGenera, Codigo=codigo)
     if request.method == 'POST':
-        form = IngresoForm(request.POST, instance=ingreso)
+        form = IngresoGeneraForm(request.POST, instance=ingreso)
         if form.is_valid():
             form.save()
             return redirect('contabilidad')
     else:
-        form = IngresoForm(instance=ingreso)
+        form = IngresoGeneraForm(instance=ingreso)
     return render(request, 'contabilidad.html', {'form': form, 'ingreso': ingreso})
 
 def editar_gasto(request, codigo):
-    gasto = get_object_or_404(Gasto, Codigo=codigo)
+    gasto_contenido_salario_form = GastoContenidoSalarioForm()
+    gasto = get_object_or_404(GastoContenidoSalario, Codigo=codigo)
     if request.method == 'POST':
-        form = GastoForm(request.POST, instance=gasto)
-        if form.is_valid():
-            form.save()
+        gasto_contenido_salario_form = GastoContenidoSalarioForm(request.POST, instance=gasto)
+        if gasto_contenido_salario_form.is_valid():
+            gasto_contenido_salario_form.save()
             return redirect ('contabilidad')
     else:
-        form = GastoForm(instance=gasto)
-    return render(request, 'contabilidad.html', {'form': form, 'gasto': gasto})
+        form = GastoContenidoSalarioForm(instance=gasto)
+    return render(request, 'contabilidad.html', {'gasto_contenido_salario_form': gasto_contenido_salario_form, 'gasto': gasto})
+
 
 # Subsistema de Gestión de clientes
 
 def gestion_de_clientes(request):
-    cliente_form = ClienteForm()
+    cliente_obtiene_form = ClienteObtieneForm()
     suscripcion_form = SuscripcionForm()
-    obtiene_form = ObtieneForm()
 
-    # Agregar Cliente
     if request.method == 'POST':
-        cliente_form = ClienteForm(request.POST)
-        if cliente_form.is_valid():
-            cliente_form.save()
-            return redirect('gestion_de_clientes')
+        if 'action' in request.POST and request.POST['action'] == 'add_suscripcion':
+            suscripcion_form = SuscripcionForm(request.POST)
+            if suscripcion_form.is_valid():
+                suscripcion_form.save()
+                return redirect('gestion_de_clientes')
+            
+        elif 'action' in request.POST and request.POST['action'] == 'add_cliente_obtiene':
+            cliente_obtiene_form = ClienteObtieneForm(request.POST)
+            if cliente_obtiene_form.is_valid():
+                cliente_obtiene_form.save()
+                return redirect('gestion_de_clientes')
     
     #Listar Clientes
-    cliente_list = Cliente.objects.all()
-
-    # Agregar Suscripcion
-    if request.method == 'POST':
-        suscripcion_form = SuscripcionForm(request.POST)
-        if suscripcion_form.is_valid():
-            suscripcion_form.save()
-            return redirect('gestion_de_clientes')
+    cliente_obtiene_list = ClienteObtiene.objects.all()
         
     # Listar Suscripcion
     suscripcion_list = Suscripcion.objects.all()
 
-    # Agregar relación obtiene
-    if request.method == 'POST':
-        obtiene_form = ObtieneForm(request.POST)
-        if obtiene_form.is_valid():
-            obtiene_form.save()
-            return redirect('gestion_de_clientes')
-
-    # Listar relación obtiene
-    obtiene_list = Obtiene.objects.all()
+    # Listar Incluye
+    incluye_list = Incluye.objects.all()
 
     return render(request, 'gestion_de_clientes.html', {
-        'cliente_form': cliente_form,
-        'cliente_list': cliente_list,
+        'cliente_obtiene_form': cliente_obtiene_form,
+        'cliente_obtiene_list': cliente_obtiene_list,
         'suscripcion_form': suscripcion_form,
         'suscripcion_list': suscripcion_list,
-        'obtiene_form': obtiene_form,
-        'obtiene_list': obtiene_list,
+        'incluye_list': incluye_list,
     })
 
-def borrar_cliente(request, cliente_id):
-    cliente = get_object_or_404(Cliente, DNICl=cliente_id)
-    if request.method == 'POST':
-        cliente.delete()
-        return redirect('gestion_de_clientes')
-    return render(request, 'gestion_de_clientes.html', {'cliente': cliente})
 
 def borrar_suscripcion(request, suscripcion_id):
     suscripcion = get_object_or_404(Suscripcion, DatosSuscripcion=suscripcion_id)
@@ -166,22 +153,22 @@ def borrar_suscripcion(request, suscripcion_id):
         return redirect('gestion_de_clientes')
     return render(request, 'gestion_de_clientes.html', {'suscripcion': suscripcion})
 
-def borrar_obtiene(request, obtiene_id):
-    obtiene = get_object_or_404(Obtiene, DatosSucripcion=obtiene_id)
+def borrar_cliente_obtiene(request, cliente_obtiene_id):
+    cliente_obtiene = get_object_or_404(ClienteObtiene, DNICl=cliente_obtiene_id)
     if request.method == 'POST':
-        obtiene.delete()
+        cliente_obtiene.delete()
         return redirect('gestion_de_clientes')
-    return render(request, 'gestion_de_clientes.html', {'obtiene': obtiene})
+    return render(request, 'gestion_de_clientes.html', {'cliente_obtiene': cliente_obtiene})
 
 def editar_cliente(request, cliente_id):
-    cliente = get_object_or_404(Cliente, DNICl=cliente_id)
+    cliente = get_object_or_404(ClienteObtiene, DNICl=cliente_id)
     if request.method == 'POST':
-        form = ClienteForm(request.POST, instance=cliente)
+        form = ClienteObtieneForm(request.POST, instance=cliente)
         if form.is_valid():
             form.save()
             return redirect('gestion_de_clientes')
     else:
-        form = IngresoForm(instance=cliente)
+        form = IngresoGeneraForm(instance=cliente)
     return render(request, 'gestion_de_clientes.html', {'form': form, 'cliente': cliente})
 
 def editar_suscripcion(request, suscripcion_id):
@@ -192,27 +179,26 @@ def editar_suscripcion(request, suscripcion_id):
             form.save()
             return redirect('gestion_de_clientes')
     else:
-        form = IngresoForm(instance=suscripcion)
+        form = IngresoGeneraForm(instance=suscripcion)
     return render(request, 'gestion_de_clientes.html', {'form': form, 'suscripcion': suscripcion})
 
 # Subsistema de Recursos Humanos
 
 def recursos_humanos(request):
-    trabajador_form = TrabajadorForm()
+    trabajador_pertenece_form = TrabajadorPerteneceForm()
     departamento_form = DepartamentoForm()
-    pertenece_form = PerteneceForm()
 
     # Agregar Trabajador
     if request.method == 'POST':
-        trabajador_form = TrabajadorForm(request.POST)
-        if trabajador_form.is_valid():
-            trabajador_form.save()
+        trabajador_pertenece_form = TrabajadorPerteneceForm(request.POST)
+        if trabajador_pertenece_form.is_valid():
+            trabajador_pertenece_form.save()
             return redirect('recursos_humanos')
     else:
-        trabajador_form = TrabajadorForm()
+        trabajador_pertenece_form = TrabajadorPerteneceForm()
     
     # Listar Trabajadores
-    trabajador_list = Trabajador.objects.all()
+    trabajador_pertenece_list = TrabajadorPertenece.objects.all()
 
     # Agregar Departamento
     if request.method == 'POST':
@@ -224,27 +210,15 @@ def recursos_humanos(request):
     # Listar Departamentos
     departamento_list = Departamento.objects.all()
 
-    # Agregar relación pertenece
-    if request.method == 'POST':
-        pertenece_form = PerteneceForm(request.POST)
-        if pertenece_form.is_valid():
-            pertenece_form.save()
-            return redirect('recursos_humanos')
-    
-    # Listar relación pertenece
-    pertenece_list = Pertenece.objects.all()
-
     return render(request, 'recursos_humanos.html', {
-        'trabajador_form': trabajador_form,
-        'trabajador_list': trabajador_list,
+        'trabajador_pertenece_form': trabajador_pertenece_form,
+        'trabajador_pertenece_list': trabajador_pertenece_list,
         'departamento_form': departamento_form,
         'departamento_list': departamento_list,
-        'pertenece_form': pertenece_form,
-        'pertenece_list': pertenece_list,
     })
 
 def borrar_trabajador(request, trabajador_id):
-    trabajador = get_object_or_404(Trabajador, DNIT=trabajador_id)
+    trabajador = get_object_or_404(TrabajadorPertenece, DNIT=trabajador_id)
     if request.method == 'POST':
         trabajador.delete()
         return redirect('recursos_humanos')
@@ -257,22 +231,16 @@ def borrar_departamento(request, departamento_id):
         return redirect('recursos_humanos')
     return render(request, 'recursos_humanos.html', {'departamento': departamento})
 
-def borrar_pertenece(request, pertenece_id):
-    pertenece = get_object_or_404(Pertenece, DNIT=pertenece_id)
-    if request.method == 'POST':
-        pertenece.delete()
-        return redirect('recursos_humanos')
-    return render(request, 'recursos_humanos.html', {'pertenece': pertenece})
 
 def editar_trabajador(request, trabajador_id):
-    trabajador = get_object_or_404(Trabajador, DNIT=trabajador_id)
+    trabajador = get_object_or_404(TrabajadorPertenece, DNIT=trabajador_id)
     if request.method == 'POST':
-        form = TrabajadorForm(request.POST, instance=trabajador)
+        form = TrabajadorPerteneceForm(request.POST, instance=trabajador)
         if form.is_valid():
             form.save()
             return redirect('recursos_humanos')
     else:
-        form = IngresoForm(instance=trabajador)
+        form = TrabajadorPerteneceForm(instance=trabajador)
     return render(request, 'recursos_humanos.html', {'form': form, 'trabajador': trabajador})
 
 def editar_departamento(request, departamento_id):
@@ -283,56 +251,75 @@ def editar_departamento(request, departamento_id):
             form.save()
             return redirect('recursos_humanos')
     else:
-        form = IngresoForm(instance=departamento)
+        form = DepartamentoForm(instance=departamento)
     return render(request, 'recursos_humanos.html', {'form': form, 'departamento': departamento})
 
 # Subsistema de Producción
 
 def produccion(request):
-    # Agregar Contenido
+    # Agregar contenido y película
     if request.method == 'POST':
-        contenido_form = ContenidoForm(request.POST)
-        if contenido_form.is_valid():
-            contenido_form.save()
+        pelicula_contenido_form = PeliculaContenidoForm(request.POST)
+        if pelicula_contenido_form.is_valid():
+            # Primero crear el Contenido
+            nuevo_contenido = Contenido.objects.create(
+                Titulo=pelicula_contenido_form.cleaned_data['Titulo'],
+                Fecha=pelicula_contenido_form.cleaned_data['Fecha'],
+                Director=pelicula_contenido_form.cleaned_data['Director'],
+                Pais=pelicula_contenido_form.cleaned_data['Pais'],
+                Genero=pelicula_contenido_form.cleaned_data['Genero']
+            )
+            # Luego crear la Película asociada
+            Pelicula.objects.create(
+                Titulo=pelicula_contenido_form.cleaned_data['Titulo'],
+                Fecha=pelicula_contenido_form.cleaned_data['Fecha'],
+                Duracion=pelicula_contenido_form.cleaned_data['Duracion'],
+                contenido=nuevo_contenido
+            )
             return redirect('produccion')
     else:
-        contenido_form = ContenidoForm()
+        pelicula_contenido_form = PeliculaContenidoForm()
 
     # Mostrar Contenido
     contenido_list = Contenido.objects.all()
 
-    # Agregar Película
-    if request.method == 'POST':
-        pelicula_form = PeliculaForm(request.POST)
-        if pelicula_form.is_valid():
-            pelicula_form.save()
-            return redirect('produccion')
-    else:
-        pelicula_form = PeliculaForm()
-
     # Mostrar Película
     pelicula_list = Pelicula.objects.all()
 
-    # Agregar Serie
+    # Agregar contenido y serie
     if request.method == 'POST':
-        serie_form = SerieForm(request.POST)
-        if serie_form.is_valid():
-            serie_form.save()
+        serie_contenido_form = SerieContenidoForm(request.POST)
+        if serie_contenido_form.is_valid():
+            # Primero crear el Contenido
+            nuevo_contenido = Contenido.objects.create(
+                Titulo=serie_contenido_form.cleaned_data['Titulo'],
+                Fecha=serie_contenido_form.cleaned_data['Fecha'],
+                Director=serie_contenido_form.cleaned_data['Director'],
+                Pais=serie_contenido_form.cleaned_data['Pais'],
+                Genero=serie_contenido_form.cleaned_data['Genero']
+            )
+            # Luego crear la Película asociada
+            Serie.objects.create(
+                Titulo=serie_contenido_form.cleaned_data['Titulo'],
+                Fecha=serie_contenido_form.cleaned_data['Fecha'],
+                Temporadas=serie_contenido_form.cleaned_data['Temporadas'],
+                contenido=nuevo_contenido
+            )
             return redirect('produccion')
     else:
-        serie_form = SerieForm
+        serie_contenido_form = SerieContenidoForm()
 
     # Mostrar Serie
     serie_list = Serie.objects.all()
 
     return render(request, 'produccion.html', {
-        'contenido_form': contenido_form,
         'contenido_list': contenido_list,
-        'pelicula_form': pelicula_form,
+        'pelicula_contenido_form': pelicula_contenido_form,
         'pelicula_list': pelicula_list,
-        'serie_form': serie_form,
+        'serie_contenido_form': serie_contenido_form,
         'serie_list': serie_list,
     })
+
 
 def borrar_contenido_y_pelicula(request, contenido_id):
     contenido = get_object_or_404(Contenido, pk=contenido_id)

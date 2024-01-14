@@ -21,43 +21,7 @@
 
     <main>
 
-        <div class="seccion">
 
-            <div class="formulario">
-                <h2>Dar de alta contenido</h2>
-                <form method="post" action="{% url 'produccion' %}">
-                    {% csrf_token %}
-                    {{ contenido_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Agregar Contenido</button>
-                </form>
-            </div>
-
-            <div class="listado">
-
-                <h2>Listar contenidos</h2>
-                <ul>
-                    {% for contenido in contenido_list %}
-                    <li>{{ contenido.Titulo }} - {{ contenido.Fecha }} - {{ contenido.Director }} - {{ contenido.Pais }} - {{ contenido.Genero }}
-                    <div class="contenedor-botones">
-                        <button type="button" class="mostrarpop btn btn-outline-danger" contenido_id="{{ contenido.pk }}">Borrar</button>
-                    </div>
-
-                    <dialog id="popup-{{ contenido.pk }}" class="flotante">
-                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ contenido.Titulo }}"?</p>
-                        <form method="post" action="{% url 'borrar_contenido_y_pelicula' contenido.pk %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
-                        </form>
-                        <a href="{% url 'produccion' %}">Cancelar</a>
-                    </dialog>
-
-                    </li>
-                    {% endfor %}
-                </ul>
-
-            </div>
-
-        </div>
 
         <div class="seccion">
 
@@ -65,7 +29,7 @@
                 <h2>Agregar Película</h2>
                 <form method="post" action="{% url 'produccion' %}">
                     {% csrf_token %}
-                    {{ pelicula_form.as_p }}
+                    {{ pelicula_contenido_form.as_p }}
                     <button type="submit" class="btn btn-outline-success">Agregar Película</button>
                 </form>
 
@@ -88,7 +52,7 @@
                 <h2>Agregar Serie</h2>
                 <form method="post" action="{% url 'produccion' %}">
                     {% csrf_token %}
-                    {{ serie_form.as_p }}
+                    {{ serie_contenido_form.as_p }}
                     <button type="submit" class="btn btn-outline-success">Agregar Serie</button>
                 </form>
 
@@ -105,7 +69,36 @@
 
         </div>
 
+        <div class="seccion alinear">
 
+            <div class="listado">
+
+                <h2>Listar contenidos</h2>
+                <ul>
+                    {% for contenido in contenido_list %}
+                    <li>{{ contenido.Titulo }} - {{ contenido.Fecha }} - {{ contenido.Director }} - {{ contenido.Pais }}
+                        - {{ contenido.Genero }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                contenido_id="{{ contenido.pk }}">Borrar</button>
+                        </div>
+
+                        <dialog id="popup-{{ contenido.pk }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el contenido:"{{ contenido.Titulo }}"?</p>
+                            <form method="post" action="{% url 'borrar_contenido_y_pelicula' contenido.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'produccion' %}">Cancelar</a>
+                        </dialog>
+
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        </div>
 
     </main>
 
@@ -115,7 +108,7 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
- 
+
             buttons.forEach(function (button) {
                 button.addEventListener('click', function () {
                     var contenido_id = button.getAttribute('contenido_id');
