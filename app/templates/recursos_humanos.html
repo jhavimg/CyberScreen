@@ -28,7 +28,7 @@
                 <h2>Dar de alta trabajador</h2>
                 <form method="post" action="{% url 'recursos_humanos' %}">
                     {% csrf_token %}
-                    {{ trabajador_form.as_p }}
+                    {{ trabajador_pertenece_form.as_p }}
                     <button type="submit" class="btn btn-outline-success">Agregar Trabajador</button>
                 </form>
             </div>
@@ -37,10 +37,9 @@
 
                 <h2>Listar trabajadores</h2>
                 <ul>
-                    {% for trabajador in trabajador_list %}
+                    {% for trabajador in trabajador_pertenece_list %}
                     <li>
-                        {{ trabajador.DNIT }} - {{ trabajador.Nombre }} - {{ trabajador.Apellidos }} -
-                        {{ trabajador.Teléfono }} - {{ trabajador.CorreoElectronico}}
+                        {{ trabajador }}
                         <div class="contenedor-botones">
                             <button type="button" class="mostrarpop btn btn-outline-danger"
                                 trabajador_id="{{ trabajador.DNIT }}">Borrar</button>
@@ -61,7 +60,7 @@
                             <p>Estas editando el trabajador con DNI: {{ trabajador.DNIT }}</p>
                             <form method="post" action="{% url 'editar_trabajador' trabajador.DNIT %}">
                                 {% csrf_token %}
-                                {{ trabajador_form.as_p }}
+                                {{ trabajador_pertenece_form.as_p }}
                                 <button type="submit" class="btn btn-outline-success">Guardar edición</button>
                             </form>
                         </dialog>
@@ -111,40 +110,6 @@
                                 {{ departamento_form.as_p }}
                                 <button type="submit" class="btn btn-outline-success">Guardar edición</button>
                             </form>
-                        </dialog>
-
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        </div>
-
-        <div class="seccion">
-            <div class="formulario">
-                <h2>Establecer a que departamento pertenece un trabajador</h2>
-                <form method="post" action="{% url 'recursos_humanos' %}">
-                    {% csrf_token %}
-                    {{ pertenece_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Agregar el trabajador al departamento</button>
-                </form>
-            </div>
-            <div class="listado">
-                <h2>Listar Trabajador-Departamento</h2>
-                <ul>
-                    {% for pertenece in pertenece_list %}
-                    <li>{{ pertenece.DNIT }} - {{ pertenece.NombreDep }}
-                        <div class="contenedor-botones">
-                            <button type="button" class="mostrarpop btn btn-outline-danger"
-                                pertenece_id="{{ pertenece.DNIT }}">Borrar</button>
-                        </div>
-
-                        <dialog id="popup-{{ departamento.NombreDep }}" class="flotante">
-                            <p>¿Estás seguro de que deseas borrar la relacion : {{ pertenece.DNIT }}-{{ pertenece.NombreDep }}?</p>
-                            <form method="post" action="{% url 'borrar_pertenece' pertenece.DNIT %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
-                            </form>
-                            <a href="{% url 'recursos_humanos' %}">Cancelar</a>
                         </dialog>
 
                     </li>

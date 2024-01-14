@@ -23,12 +23,12 @@ urlpatterns = [
 
     path('contabilidad/', contabilidad, name='contabilidad'),
     path('borrar_ingreso/<str:codigo>/', borrar_ingreso, name='borrar_ingreso'),
-    path('borrar_gasto/<str:codigo>/', borrar_gasto, name='borrar_gasto'),
     path('editar_ingreso/<str:codigo>/', editar_ingreso, name='editar_ingreso'),
+    path('borrar_gasto/<str:codigo>/', borrar_gasto, name='borrar_gasto'),
     path('editar_gasto/<str:codigo>/', editar_gasto, name='editar_gasto'),
 
     path('gestion_de_clientes/', gestion_de_clientes, name='gestion_de_clientes'),
-    path('borrar_cliente/<str:cliente_id>/', borrar_cliente, name='borrar_cliente'),
+    path('borrar_cliente_obtiene/<str:cliente_id>/', borrar_cliente_obtiene, name='borrar_cliente_obtiene'),
     path('borrar_suscripcion/<str:suscripcion_id>/', borrar_suscripcion, name='borrar_suscripcion'),
     path('editar_cliente/<str:cliente_id>/', editar_cliente, name='editar_cliente'),
     path('editar_suscripcion/<str:suscripcion_id>/', editar_suscripcion, name='editar_suscripcion'),
@@ -38,7 +38,6 @@ urlpatterns = [
     path('borrar_departamento/<str:departamento_id>/', borrar_departamento, name='borrar_departamento'),
     path('editar_trabajador/<str:trabajador_id>/', editar_trabajador, name='editar_trabajador'),
     path('editar_departamento/<str:departamento_id>/', editar_departamento, name='editar_departamento'),
-    path('borrar_pertenece/<str:pertenece_id>/', borrar_pertenece, name='borrar_pertenece'),
 
     path('produccion/', produccion, name='produccion'),
     path('borrar_contenido_y_pelicula/<str:contenido_id>/', borrar_contenido_y_pelicula, name="borrar_contenido_y_pelicula"),

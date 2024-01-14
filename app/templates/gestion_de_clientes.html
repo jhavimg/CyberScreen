@@ -2,6 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,9 +10,10 @@
 
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 
 </head>
+
 <body>
 
     {% include 'header.html' %}
@@ -22,40 +24,42 @@
 
         <div class="seccion">
             <div class="formulario">
-                <h2>Dar de alta cliente</h2>
+                <h2>Dar de alta suscripcion</h2>
                 <form method="post" action="{% url 'gestion_de_clientes' %}">
                     {% csrf_token %}
-                    {{ cliente_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Agregar Cliente</button>
+                    {{ suscripcion_form.as_p }}
+                    <button type="submit" name="action" value="add_suscripcion" class="btn btn-outline-success">Agregar Suscripcion</button>
                 </form>
             </div>
             <div class="listado">
-                <h2>Listar clientes</h2>
+                <h2>Listar Suscripciones</h2>
                 <ul>
-                    {% for cliente in cliente_list %}
-                    <li>{{ cliente.DNICl }} - {{ cliente.Teléfono }} - {{ cliente.Nombre }} - {{ cliente.Correo }}
-                    <div class="contenedor-botones">
-                        <button type="button" class="mostrarpop btn btn-outline-danger" cliente_id="{{ cliente.DNICl }}">Borrar</button>
-                        <button type="button" class="editar-cliente btn btn-outline-warning" cliente_id="{{ cliente.DNICl }}">Editar</button>
-                    </div>
+                    {% for suscripcion in suscripcion_list %}
+                    <li>{{ suscripcion.DatosSuscripcion }} - {{ suscripcion.Tipo }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Borrar</button>
+                            <button type="button" class="editar-suscripcion btn btn-outline-warning"
+                                suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Editar</button>
+                        </div>
 
-                    <dialog id="popup-{{ cliente.DNICl }}" class="flotante">
-                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ cliente.DNICl }}"?</p>
-                        <form method="post" action="{% url 'borrar_cliente' cliente.DNICl %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
-                        </form>
-                        <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
-                    </dialog>
+                        <dialog id="popup-{{ suscripcion.DatosSuscripcion }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el contenido:"{{ suscripcion.DatosSuscripcion }}"?</p>
+                            <form method="post" action="{% url 'borrar_suscripcion' suscripcion.DatosSuscripcion %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                        </dialog>
 
-                    <dialog id="popup-editar-{{ cliente.DNICl }}" class="flotante">
-                        <p>Estas editando el cliente con DNI: {{ cliente.DNICl }}</p>
-                        <form method="post" action="{% url 'editar_cliente' cliente.DNICl %}">
-                            {% csrf_token %}
-                            {{ cliente_form.as_p }}
-                            <button type="submit" class="btn btn-outline-success">Guardar edición</button>
-                        </form>
-                    </dialog>
+                        <dialog id="popup-editar-{{ suscripcion.DatosSuscripcion }}" class="flotante">
+                            <p>Estas editando la suscripcion con código: {{ suscripcion.DatosSuscripcion }}</p>
+                            <form method="post" action="{% url 'editar_suscripcion' suscripcion.DatosSuscripcion %}">
+                                {% csrf_token %}
+                                {{ suscripcion_form.as_p }}
+                                <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                            </form>
+                        </dialog>
 
                     </li>
                     {% endfor %}
@@ -65,42 +69,55 @@
 
         <div class="seccion">
             <div class="formulario">
-                <h2>Dar de alta suscripcion</h2>
+                <h2>Dar de alta cliente</h2>
                 <form method="post" action="{% url 'gestion_de_clientes' %}">
                     {% csrf_token %}
-                    {{ suscripcion_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Agregar Suscripcion</button>
+                    {{ cliente_obtiene_form.as_p }}
+                    <button type="submit" name="action" value="add_cliente_obtiene" class="btn btn-outline-success">Agregar Cliente</button>
                 </form>
             </div>
             <div class="listado">
-                <h2>Listar Suscripciones</h2>
+                <h2>Listar clientes</h2>
                 <ul>
-                    {% for suscripcion in suscripcion_list %}
-                    <li>{{ suscripcion.DatosSuscripcion }} - {{ suscripcion.Tipo }} - {{ suscripcion.Nivel }}
-                    <div class="contenedor-botones">
-                        <button type="button" class="mostrarpop btn btn-outline-danger" suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Borrar</button>
-                        <button type="button" class="editar-suscripcion btn btn-outline-warning" suscripcion_id="{{ suscripcion.DatosSuscripcion }}">Editar</button>
-                    </div>
+                    {% for cliente in cliente_obtiene_list %}
+                    <li>{{ cliente }}
+                        <div class="contenedor-botones">
+                            <button type="button" class="mostrarpop btn btn-outline-danger"
+                                cliente_id="{{ cliente.DNICl }}">Borrar</button>
+                            <button type="button" class="editar-cliente btn btn-outline-warning"
+                                cliente_id="{{ cliente.DNICl }}">Editar</button>
+                        </div>
 
-                    <dialog id="popup-{{ suscripcion.DatosSuscripcion }}" class="flotante">
-                        <p>¿Estás seguro de que deseas borrar el contenido:"{{ suscripcion.DatosSuscripcion }}"?</p>
-                        <form method="post" action="{% url 'borrar_suscripcion' suscripcion.DatosSuscripcion %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
-                        </form>
-                        <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
-                    </dialog>
+                        <dialog id="popup-{{ cliente.DNICl }}" class="flotante">
+                            <p>¿Estás seguro de que deseas borrar el contenido:"{{ cliente.DNICl }}"?</p>
+                            <form method="post" action="{% url 'borrar_cliente_obtiene' cliente.DNICl %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-success">Sí, borrar</button>
+                            </form>
+                            <a href="{% url 'gestion_de_clientes' %}">Cancelar</a>
+                        </dialog>
 
-                    <dialog id="popup-editar-{{ suscripcion.DatosSuscripcion }}" class="flotante">
-                        <p>Estas editando la suscripcion con código: {{ suscripcion.DatosSuscripcion }}</p>
-                        <form method="post" action="{% url 'editar_suscripcion' suscripcion.DatosSuscripcion %}">
-                            {% csrf_token %}
-                            {{ suscripcion_form.as_p }}
-                            <button type="submit" class="btn btn-outline-success">Guardar edición</button>
-                        </form>
-                    </dialog>
+                        <dialog id="popup-editar-{{ cliente.DNICl }}" class="flotante">
+                            <p>Estas editando el cliente con DNI: {{ cliente.DNICl }}</p>
+                            <form method="post" action="{% url 'editar_cliente' cliente.DNICl %}">
+                                {% csrf_token %}
+                                {{ cliente_obtiene_form.as_p }}
+                                <button type="submit" class="btn btn-outline-success">Guardar edición</button>
+                            </form>
+                        </dialog>
 
                     </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="seccion alinear">
+            <div class="listado muy-grande">
+                <h2>Contenido incluido en suscripción</h2>
+                <ul>
+                    {% for incluye in incluye_list %}
+                    <li>{{ incluye }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -114,7 +131,7 @@
         // Borrar cliente
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
- 
+
             buttons.forEach(function (button) {
                 button.addEventListener('click', function () {
                     var cliente_id = button.getAttribute('cliente_id');
@@ -127,7 +144,7 @@
         // Borrar suscripcion
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.mostrarpop');
- 
+
             buttons.forEach(function (button) {
                 button.addEventListener('click', function () {
                     var suscripcion_id = button.getAttribute('suscripcion_id');
@@ -140,7 +157,7 @@
         // Editar cliente
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.editar-cliente');
- 
+
             buttons.forEach(function (button) {
                 button.addEventListener('click', function () {
                     var cliente_id = button.getAttribute('cliente_id');
@@ -153,7 +170,7 @@
         // Editar suscripcion
         document.addEventListener('DOMContentLoaded', function () {
             var buttons = document.querySelectorAll('.editar-suscripcion');
- 
+
             buttons.forEach(function (button) {
                 button.addEventListener('click', function () {
                     var suscripcion_id = button.getAttribute('suscripcion_id');
@@ -162,8 +179,8 @@
                 });
             });
         });
-
     </script>
-    
+
 </body>
+
 </html>

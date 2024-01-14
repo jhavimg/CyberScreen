@@ -27,8 +27,8 @@
                 <h2>Dar de alta ingreso</h2>
                 <form method="post">
                     {% csrf_token %}
-                    {{ ingreso_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                    {{ ingreso_genera_form.as_p }}
+                    <button type="submit" name="action" value="add_ingreso" class="btn btn-outline-success">Guardar</button>
                 </form>
             </div>
 
@@ -37,7 +37,7 @@
                 <ul>
                     {% for ingreso in ingreso_list %}
                     <li>
-                        {{ ingreso.Codigo }} - {{ ingreso.Fecha }} - {{ ingreso.Autor }} - {{ ingreso.Cantidad }}
+                        {{ ingreso }}
                         <div class="contenedor-botones">
                             <button type="button" class="mostrarpop btn btn-outline-danger" data-ingreso-codigo="{{ ingreso.Codigo }}">Borrar</button>
                             <button type="button" class="editar btn btn-outline-warning" ingreso_id="{{ ingreso.Codigo }}">Editar</button>
@@ -57,7 +57,7 @@
                             <p>Estas editando el ingreso con código: {{ ingreso.Codigo }}</p>
                             <form method="post" action="{% url 'editar_ingreso' ingreso.Codigo %}">
                                 {% csrf_token %}
-                                {{ ingreso_form.as_p }}
+                                {{ ingreso_genera_form.as_p }}
                                 <button type="submit" class="btn btn-outline-success">Guardar edición</button>
                             </form>
                         </dialog>
@@ -71,19 +71,29 @@
 
         <div class="seccion">
             <div class="formulario">
-                <h2>Dar de alta gasto</h2>
+                <h2>Dar de alta gasto asociado a un contenido (serie o película)</h2>
                 <form method="post">
                     {% csrf_token %}
-                    {{ gasto_form.as_p }}
-                    <button type="submit" class="btn btn-outline-success">Guardar</button>
+                    {{ gastocontenido_form.as_p }}
+                    <button type="submit" name="action" value="add_gastocontenido" class="btn btn-outline-success">Guardar</button>
                 </form>
             </div>
+            <div class="formulario">
+                <h2>Dar de alta gasto asociado a un salario de un trabajador</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ pagosalario_form.as_p }}
+                    <button type="submit" name="action" value="add_pagosalario" class="btn btn-outline-success">Guardar</button>
+                </form>
+            </div>
+        </div>
+        <div class="seccion alinear">
             <div class="listado">
                 <h2>Gastos</h2>
                 <ul>
                     {% for gasto in gasto_list %}
                     <li>
-                        {{ gasto.Codigo }} - {{ gasto.Fecha }} - {{ gasto.Autor }} - {{ gasto.Cantidad }}
+                        {{ gasto }} - {% if gasto.Contenido %}{{ gasto.Contenido.Titulo }} - {{ gasto.Contenido.Fecha }}{% endif %}{% if gasto.DNIT %}{{ gasto.DNIT }}{% endif %}
                         <div class="contenedor-botones">
                             <button type="button" class="borrar-gasto btn btn-outline-danger" gasto_id="{{ gasto.Codigo }}">Borrar</button>
                             <button type="button" class="editar-gasto btn btn-outline-warning" gasto_id="{{ gasto.Codigo }}">Editar</button>
@@ -103,7 +113,7 @@
                             <p>Estas editando el ingreso con código: {{ gasto.Codigo }}</p>
                             <form method="post" action="{% url 'editar_gasto' gasto.Codigo %}">
                                 {% csrf_token %}
-                                {{ gasto_form.as_p }}
+                                {{ gasto_contenido_salario_form.as_p }}
                                 <button type="submit" class="btn btn-outline-success">Guardar edición</button>
                             </form>
                         </dialog>
